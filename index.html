@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>:root{color-scheme:light}html,body{margin:0}</style>
+<title>Enzo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@500;700&family=Tajawal:wght@400;500;700&display=swap">
+<style>
+/* Layout: oversized ENZO wordmark hero, then a filterable product grid, size table, and an order list that builds a message to send to the shop. */
+:root {
+  --bg: #ECEEEA;
+  --surface: #F7F8F5;
+  --fg: #12171E;
+  --muted: #5B6470;
+  --line: #CDD2CC;
+  --accent: #2A3FB5;
+  --accent-fg: #FFFFFF;
+  --tile: #DDE1DB;
+  --ok: #1F7A4D;
+  --font-display: 'Reem Kufi', 'Tajawal', system-ui, sans-serif;
+  --font-body: 'Tajawal', system-ui, -apple-system, 'Segoe UI', Tahoma, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0D1015; --surface: #151A21; --fg: #E8EAE4; --muted: #98A1AD;
+    --line: #28303A; --accent: #8FA2FF; --accent-fg: #0D1015; --tile: #1D242D; --ok: #5FD39A;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0D1015; --surface: #151A21; --fg: #E8EAE4; --muted: #98A1AD;
+  --line: #28303A; --accent: #8FA2FF; --accent-fg: #0D1015; --tile: #1D242D; --ok: #5FD39A;
+  color-scheme: dark;
+}
+body { background: var(--bg); color: var(--fg); }
+
+.app { font-family: var(--font-body); font-size: 16px; line-height: 1.7; padding-inline: 16px; padding-block: 0 96px; }
+.wrap { max-width: 1080px; margin-inline: auto; }
+.app *, .app *::before, .app *::after { box-sizing: border-box; }
+.app a { color: inherit; }
+.app :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 700; margin: 0; text-wrap: balance; line-height: 1.25; }
+
+/* header */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); border-bottom: 1px solid var(--line); margin-inline: -16px; padding-inline: 16px; }
+.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 10px; }
+.logo { font-family: var(--font-display); font-weight: 700; font-size: 1.6rem; letter-spacing: .18em; text-decoration: none; direction: ltr; }
+.nav { display: flex; gap: 20px; align-items: center; font-weight: 500; }
+.nav a { text-decoration: none; color: var(--muted); }
+.nav a:hover { color: var(--fg); }
+.pill { background: var(--accent); color: var(--accent-fg) !important; padding: 4px 14px; border-radius: 99px; font-weight: 700; }
+
+/* hero */
+.hero { padding-block: 40px 48px; display: grid; gap: 8px; }
+.eyebrow { color: var(--muted); font-weight: 500; letter-spacing: .04em; }
+.wordmark { font-family: var(--font-display); font-weight: 700; direction: ltr; text-align: start; font-size: clamp(5rem, 27vw, 17rem); line-height: .9; letter-spacing: .04em; margin: 0; color: var(--fg); }
+.wordmark span { color: var(--accent); }
+.hero-row { display: flex; flex-wrap: wrap; gap: 20px 40px; align-items: end; justify-content: space-between; margin-top: 12px; }
+.hero-row p { margin: 0; max-width: 34ch; font-size: 1.15rem; }
+.btn { display: inline-block; background: var(--fg); color: var(--bg); border: 0; padding: 12px 26px; border-radius: 4px; font: 700 1rem var(--font-body); text-decoration: none; cursor: pointer; }
+.btn:hover { background: var(--accent); color: var(--accent-fg); }
+.btn.ghost { background: transparent; color: var(--fg); border: 1.5px solid var(--fg); }
+.btn.ghost:hover { background: var(--fg); color: var(--bg); }
+
+/* sections */
+section { padding-block: 40px; border-top: 1px solid var(--line); }
+.sec-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
+.sec-head h2 { font-size: clamp(1.6rem, 5vw, 2.2rem); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { border: 1.5px solid var(--line); background: transparent; color: var(--fg); padding: 4px 16px; border-radius: 99px; font: 500 .95rem var(--font-body); cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+
+/* products */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 24px 20px; }
+.card { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.tile { background: var(--tile); aspect-ratio: 4 / 5; max-width: 100%; display: grid; place-items: center; position: relative; }
+.tile svg { width: 66%; height: auto; }
+.tag { position: absolute; top: 10px; inset-inline-start: 10px; background: var(--bg); color: var(--fg); font-size: .8rem; font-weight: 700; padding: 0 10px; border-radius: 99px; }
+.card h3 { font-size: 1.15rem; }
+.meta { display: flex; justify-content: space-between; gap: 8px; color: var(--muted); font-size: .95rem; }
+.price { color: var(--fg); font-weight: 700; font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate; }
+.sizes { display: flex; flex-wrap: wrap; gap: 6px; }
+.sz { min-width: 40px; border: 1.5px solid var(--line); background: transparent; color: var(--fg); padding: 0 8px; border-radius: 4px; font: 500 .9rem var(--font-body); cursor: pointer; direction: ltr; }
+.sz[aria-pressed="true"] { border-color: var(--accent); background: var(--accent); color: var(--accent-fg); }
+.add { width: 100%; }
+
+/* size table */
+.scroll { overflow-x: auto; max-width: 100%; border: 1px solid var(--line); background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 460px; font-variant-numeric: tabular-nums; }
+th, td { padding: 10px 16px; text-align: center; border-bottom: 1px solid var(--line); }
+th { font-family: var(--font-display); font-weight: 700; color: var(--muted); }
+tbody tr:last-child td { border-bottom: 0; }
+td:first-child, th:first-child { text-align: start; font-weight: 700; }
+.note { color: var(--muted); font-size: .95rem; margin: 12px 0 0; }
+
+/* order */
+.order { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 32px; align-items: start; }
+@media (max-width: 720px) { .order { grid-template-columns: minmax(0, 1fr); } }
+.lines { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); min-height: 96px; }
+.line { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 12px; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+.line:last-child { border-bottom: 0; }
+.line b { display: block; overflow-wrap: anywhere; }
+.line small { color: var(--muted); }
+.qty { display: flex; align-items: center; gap: 4px; direction: ltr; }
+.qty button { width: 32px; height: 32px; border: 1.5px solid var(--line); background: transparent; color: var(--fg); border-radius: 4px; font: 700 1.1rem var(--font-body); cursor: pointer; }
+.qty span { min-width: 24px; text-align: center; font-variant-numeric: tabular-nums; }
+.empty { padding: 28px 16px; color: var(--muted); text-align: center; margin: auto; }
+.total { display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: 700; padding: 14px 4px 0; }
+.side { display: flex; flex-direction: column; gap: 12px; }
+.side label { font-weight: 700; }
+.side input, .side textarea { width: 100%; font: 400 1rem var(--font-body); color: var(--fg); background: var(--surface); border: 1.5px solid var(--line); border-radius: 4px; padding: 10px 12px; }
+.side textarea { min-height: 120px; resize: vertical; }
+.ok { color: var(--ok); font-weight: 700; min-height: 1.7em; margin: 0; }
+
+footer { border-top: 1px solid var(--line); padding-block: 28px; color: var(--muted); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; font-size: .95rem; }
+
+/* floating basket */
+.basket { position: fixed; inset-inline: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 20; display: flex; justify-content: center; pointer-events: none; }
+.basket a { pointer-events: auto; background: var(--accent); color: var(--accent-fg); text-decoration: none; font-weight: 700; padding: 10px 22px; border-radius: 99px; box-shadow: 0 6px 24px rgba(0,0,0,.25); }
+.basket[hidden] { display: none !important; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } .card .tile svg { transition: transform .25s; } .card:hover .tile svg { transform: translateY(-4px); } }
+@media (max-width: 520px) { .nav a:not(.pill) { display: none; } }
+</style>
+</head>
+<body>
+<div class="app" dir="rtl" lang="ar">
+  <header class="top">
+    <div class="wrap">
+      <a class="logo" href="#top" aria-label="Enzo">ENZO</a>
+      <nav class="nav" aria-label="القائمة">
+        <a href="#collection">المنتجات</a>
+        <a href="#sizes">المقاسات</a>
+        <a class="pill" href="#order">طلبك <span id="navCount">(0)</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap" id="top">
+    <div class="hero">
+      <div class="eyebrow">محل ملابس · رجالي · نسائي · أطفال</div>
+      <h1 class="wordmark" aria-label="Enzo">ENZ<span>O</span></h1>
+      <div class="hero-row">
+        <p>لبس يومي بقماش مريّح وقصّة نضيفة. اختار القطعة والمقاس، وجهّز طلبك من هنا في دقيقة.</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <a class="btn" href="#collection">شوف المنتجات</a>
+          <a class="btn ghost" href="#sizes">دليل المقاسات</a>
+        </div>
+      </div>
+    </div>
+
+    <section id="collection">
+      <div class="sec-head">
+        <h2>المنتجات</h2>
+        <div class="chips" id="filters" role="group" aria-label="التصنيف"></div>
+      </div>
+      <div class="grid" id="grid"></div>
+      <p class="note">الأسعار بالجنيه السوداني، وهي أمثلة تتغيّر حسب القطعة.</p>
+    </section>
+
+    <section id="sizes">
+      <div class="sec-head"><h2>دليل المقاسات</h2></div>
+      <div class="scroll">
+        <table>
+          <thead><tr><th>المقاس</th><th>الصدر (سم)</th><th>الطول (سم)</th><th>الوزن التقريبي (كجم)</th></tr></thead>
+          <tbody>
+            <tr><td>S</td><td>92 – 96</td><td>68</td><td>55 – 65</td></tr>
+            <tr><td>M</td><td>97 – 102</td><td>70</td><td>65 – 75</td></tr>
+            <tr><td>L</td><td>103 – 108</td><td>72</td><td>75 – 85</td></tr>
+            <tr><td>XL</td><td>109 – 116</td><td>74</td><td>85 – 95</td></tr>
+            <tr><td>XXL</td><td>117 – 124</td><td>76</td><td>95 – 108</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">لو بين مقاسين، خُد الأكبر. القياسات تقريبية للتيشيرتات والقمصان.</p>
+    </section>
+
+    <section id="order">
+      <div class="sec-head"><h2>طلبك</h2></div>
+      <div class="order">
+        <div>
+          <div class="lines" id="lines" aria-live="polite"></div>
+          <div class="total"><span>المجموع</span><span class="price" id="total">0 ج.س</span></div>
+        </div>
+        <div class="side">
+          <label for="cname">اسمك</label>
+          <input id="cname" type="text" autocomplete="name" placeholder="مثال: محمد أحمد">
+          <label for="cnote">ملاحظات (اللون، العنوان، وقت التسليم)</label>
+          <textarea id="cnote" placeholder="اكتب أي تفاصيل تحب نعرفها"></textarea>
+          <button class="btn" id="copyBtn" type="button">انسخ الطلب</button>
+          <p class="ok" id="msg" role="status"></p>
+          <p class="note" style="margin:0">انسخ الطلب وابعتو لينا في الواتساب، ونأكد معاك التوفّر والتوصيل.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <span>© Enzo — ملابس</span>
+      <span>الدفع والتوصيل يتم الاتفاق عليهما عند تأكيد الطلب.</span>
+    </footer>
+  </main>
+
+  <div class="basket" id="basket" hidden><a href="#order" id="basketLink">طلبك: 0 قطعة</a></div>
+</div>
+
+<script>
+(function () {
+  var P = [
+    { id: 1, name: 'جلابية قطن سادة', cat: 'رجالي', price: 38000, color: '#E8E4D8', kind: 'robe', tag: 'الأكثر طلباً' },
+    { id: 2, name: 'قميص كتان', cat: 'رجالي', price: 24000, color: '#6F8FA6', kind: 'shirt' },
+    { id: 3, name: 'تيشيرت أوفرسايز', cat: 'رجالي', price: 12000, color: '#1E2A44', kind: 'tee', tag: 'جديد' },
+    { id: 4, name: 'بنطلون جينز', cat: 'رجالي', price: 28000, color: '#2F4A78', kind: 'pants' },
+    { id: 5, name: 'توب سوداني', cat: 'نسائي', price: 45000, color: '#B5386A', kind: 'dress' },
+    { id: 6, name: 'فستان صيفي', cat: 'نسائي', price: 32000, color: '#E0A93B', kind: 'dress', tag: 'جديد' },
+    { id: 7, name: 'عباية خفيفة', cat: 'نسائي', price: 40000, color: '#22262C', kind: 'robe' },
+    { id: 8, name: 'طقم أطفال', cat: 'أطفال', price: 18000, color: '#4FA38A', kind: 'tee' }
+  ];
+  var CATS = ['الكل', 'رجالي', 'نسائي', 'أطفال'];
+  var SIZES = ['S', 'M', 'L', 'XL', 'XXL'];
+  var KIND_SIZES = { dress: ['S', 'M', 'L', 'XL'] };
+  var WHATSAPP = ''; // ضع رقم الواتساب هنا بالصيغة الدولية بدون + ليظهر زر الإرسال المباشر
+
+  var SHAPES = {
+    tee: 'M30 14 L50 8 Q60 20 70 8 L90 14 L108 40 L92 50 L88 42 L88 112 L32 112 L32 42 L28 50 L12 40 Z',
+    shirt: 'M30 12 L52 6 L60 22 L68 6 L90 12 L110 40 L94 52 L88 44 L88 114 L32 114 L32 44 L26 52 L10 40 Z',
+    robe: 'M32 10 Q60 28 88 10 L106 38 L92 50 L88 44 L92 128 L28 128 L32 44 L28 50 L14 38 Z',
+    dress: 'M40 8 L50 8 Q60 24 70 8 L80 8 L84 48 L100 128 L20 128 L36 48 Z',
+    pants: 'M30 8 L90 8 L96 128 L66 128 L60 52 L54 128 L24 128 Z'
+  };
+
+  var cat = 'الكل';
+  var sel = {};           // product id -> chosen size
+  var cart = [];          // {id, size, qty}
+
+  function fmt(n) { return n.toLocaleString('en-US') + ' ج.س'; }
+  function byId(id) { for (var i = 0; i < P.length; i++) if (P[i].id === id) return P[i]; }
+  function el(t, c, h) { var e = document.createElement(t); if (c) e.className = c; if (h != null) e.textContent = h; return e; }
+
+  function renderFilters() {
+    var box = document.getElementById('filters');
+    box.innerHTML = '';
+    CATS.forEach(function (c) {
+      var b = el('button', 'chip', c);
+      b.type = 'button';
+      b.setAttribute('aria-pressed', String(c === cat));
+      b.onclick = function () { cat = c; renderFilters(); renderGrid(); };
+      box.appendChild(b);
+    });
+  }
+
+  function renderGrid() {
+    var g = document.getElementById('grid');
+    g.innerHTML = '';
+    P.filter(function (p) { return cat === 'الكل' || p.cat === cat; }).forEach(function (p) {
+      var sizes = KIND_SIZES[p.kind] || SIZES;
+      if (!sel[p.id] || sizes.indexOf(sel[p.id]) < 0) sel[p.id] = sizes.indexOf('M') >= 0 ? 'M' : sizes[0];
+      var card = el('article', 'card');
+      var tile = el('div', 'tile');
+      tile.innerHTML = '<svg viewBox="0 0 120 136" aria-hidden="true"><path d="' + SHAPES[p.kind] + '" fill="' + p.color + '" stroke="rgba(0,0,0,.28)" stroke-width="1.5" stroke-linejoin="round"/></svg>';
+      if (p.tag) tile.appendChild(el('span', 'tag', p.tag));
+      card.appendChild(tile);
+      card.appendChild(el('h3', '', p.name));
+      var m = el('div', 'meta');
+      m.appendChild(el('span', '', p.cat));
+      m.appendChild(el('span', 'price', fmt(p.price)));
+      card.appendChild(m);
+      var row = el('div', 'sizes');
+      row.setAttribute('role', 'group');
+      row.setAttribute('aria-label', 'المقاس');
+      sizes.forEach(function (s) {
+        var b = el('button', 'sz', s);
+        b.type = 'button';
+        b.setAttribute('aria-pressed', String(sel[p.id] === s));
+        b.onclick = function () {
+          sel[p.id] = s;
+          Array.prototype.forEach.call(row.children, function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+        };
+        row.appendChild(b);
+      });
+      card.appendChild(row);
+      var add = el('button', 'btn add', 'أضف للطلب');
+      add.type = 'button';
+      add.onclick = function () { addToCart(p.id, sel[p.id]); };
+      card.appendChild(add);
+      g.appendChild(card);
+    });
+  }
+
+  function addToCart(id, size) {
+    var f = cart.filter(function (c) { return c.id === id && c.size === size; })[0];
+    if (f) f.qty++; else cart.push({ id: id, size: size, qty: 1 });
+    renderCart();
+    document.getElementById('msg').textContent = '';
+  }
+
+  function change(i, d) {
+    cart[i].qty += d;
+    if (cart[i].qty <= 0) cart.splice(i, 1);
+    renderCart();
+  }
+
+  function renderCart() {
+    var box = document.getElementById('lines');
+    box.innerHTML = '';
+    var count = 0, sum = 0;
+    if (!cart.length) {
+      box.appendChild(el('div', 'empty', 'طلبك فاضي. اختار قطعة من المنتجات وأضفها هنا.'));
+    }
+    cart.forEach(function (c, i) {
+      var p = byId(c.id);
+      count += c.qty; sum += p.price * c.qty;
+      var line = el('div', 'line');
+      var info = el('div');
+      info.appendChild(el('b', '', p.name));
+      info.appendChild(el('small', '', 'المقاس ' + c.size + ' · ' + fmt(p.price)));
+      line.appendChild(info);
+      var q = el('div', 'qty');
+      var minus = el('button', '', '−'); minus.type = 'button'; minus.setAttribute('aria-label', 'أنقص'); minus.onclick = function () { change(i, -1); };
+      var plus = el('button', '', '+'); plus.type = 'button'; plus.setAttribute('aria-label', 'زيد'); plus.onclick = function () { change(i, 1); };
+      q.appendChild(minus); q.appendChild(el('span', '', String(c.qty))); q.appendChild(plus);
+      line.appendChild(q);
+      line.appendChild(el('span', 'price', fmt(p.price * c.qty)));
+      box.appendChild(line);
+    });
+    document.getElementById('total').textContent = fmt(sum);
+    document.getElementById('navCount').textContent = '(' + count + ')';
+    document.getElementById('basketLink').textContent = 'طلبك: ' + count + ' قطعة · ' + fmt(sum);
+    document.getElementById('basket').hidden = count === 0;
+  }
+
+  function buildText() {
+    var name = document.getElementById('cname').value.trim();
+    var note = document.getElementById('cnote').value.trim();
+    var sum = 0;
+    var t = 'السلام عليكم، طلب من موقع Enzo:\n';
+    cart.forEach(function (c) {
+      var p = byId(c.id); sum += p.price * c.qty;
+      t += '- ' + p.name + ' | مقاس ' + c.size + ' | عدد ' + c.qty + ' | ' + fmt(p.price * c.qty) + '\n';
+    });
+    t += 'المجموع: ' + fmt(sum) + '\n';
+    if (name) t += 'الاسم: ' + name + '\n';
+    if (note) t += 'ملاحظات: ' + note + '\n';
+    return t;
+  }
+
+  function say(s) { document.getElementById('msg').textContent = s; }
+
+  document.getElementById('copyBtn').onclick = function () {
+    if (!cart.length) { say('أضف قطعة واحدة على الأقل قبل النسخ.'); return; }
+    var text = buildText();
+    if (WHATSAPP) {
+      window.open('https://wa.me/' + WHATSAPP + '?text=' + encodeURIComponent(text), '_blank');
+    }
+    function fallback() {
+      var ta = document.getElementById('cnote');
+      ta.value = text; ta.focus(); ta.select();
+      say('حدّد النص وانسخو يدوياً.');
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { say('تم نسخ الطلب. الصقو في الواتساب.'); }, fallback);
+    } else fallback();
+  };
+
+  renderFilters(); renderGrid(); renderCart();
+})();
+</script>
+</body>
+</html>
